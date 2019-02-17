@@ -27,6 +27,7 @@ class Html extends React.Component {
     scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
     app: PropTypes.object, // eslint-disable-line
     children: PropTypes.string.isRequired,
+    jss: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -35,7 +36,16 @@ class Html extends React.Component {
   };
 
   render() {
-    const { title, description, styles, scripts, app, children } = this.props;
+    const {
+      title,
+      description,
+      styles,
+      scripts,
+      app,
+      children,
+      jss,
+    } = this.props;
+
     return (
       <html className="no-js" lang="en">
         <head>
@@ -56,6 +66,7 @@ class Html extends React.Component {
               dangerouslySetInnerHTML={{ __html: style.cssText }}
             />
           ))}
+          <style id="jss-server-side">{jss}</style>
         </head>
         <body>
           <div id="app" dangerouslySetInnerHTML={{ __html: children }} />

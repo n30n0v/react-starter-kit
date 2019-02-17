@@ -19,6 +19,15 @@ import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
+import { SheetsRegistry } from 'jss';
+import JssProvider from 'react-jss/lib/JssProvider';
+import {
+  createMuiTheme,
+  createGenerateClassName,
+  MuiThemeProvider,
+} from '@material-ui/core/styles';
+import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
@@ -158,9 +167,37 @@ app.get('*', async (req, res, next) => {
     }
 
     const data = { ...route };
-    data.children = ReactDOM.renderToString(
-      <App context={context}>{route.component}</App>,
+
+    // Create a sheetsRegistry instance.
+    const sheetsRegistry = new SheetsRegistry();
+
+    // Create a sheetsManager instance.
+    const sheetsManager = new Map();
+
+    // Create a theme instance.
+    const theme = createMuiTheme({
+      palette: {
+        primary: green,
+        accent: red,
+        type: 'dark',
+      },
+    });
+
+    // Create a new class name generator.
+    const generateClassName = createGenerateClassName();
+
+    const root = (
+      <JssProvider
+        registry={sheetsRegistry}
+        generateClassName={generateClassName}
+      >
+        <MuiThemeProvider theme={theme} sheetsManager={sheetsManager}>
+          <App context={context}>{route.component}</App>
+        </MuiThemeProvider>
+      </JssProvider>
     );
+
+    data.children = ReactDOM.renderToString(root);
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
 
     const scripts = new Set();
@@ -179,6 +216,9 @@ app.get('*', async (req, res, next) => {
     data.app = {
       apiUrl: config.api.clientUrl,
     };
+
+    // Grab the CSS from our sheetsRegistry.
+    data.jss = sheetsRegistry.toString();
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
