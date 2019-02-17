@@ -26,7 +26,7 @@ const isVerbose = process.argv.includes('--verbose');
 const isAnalyze =
   process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
-const reScript = /\.(js|jsx|mjs)$/;
+const reScript = /\.(js|jsx|mjs|ts|tsx)$/;
 const reStyle = /\.(css|less|styl|scss|sass|sss)$/;
 const reImage = /\.(bmp|gif|jpg|jpeg|png|svg)$/;
 const staticAssetName = isDebug
@@ -63,8 +63,9 @@ const config = {
 
   resolve: {
     // Allow absolute paths in imports, e.g. import Button from 'components/Button'
-    // Keep in sync with .flowconfig and .eslintrc
+    // Keep in sync with .eslintrc
     modules: ['node_modules', 'src'],
+    extensions: ['.mjs', '.js', '.json', '.ts', '.tsx'],
   },
 
   module: {
@@ -101,9 +102,9 @@ const config = {
             // Experimental ECMAScript proposals
             // https://babeljs.io/docs/plugins/#presets-stage-x-experimental-presets-
             ['@babel/preset-stage-2', { decoratorsLegacy: true }],
-            // Flow
-            // https://github.com/babel/babel/tree/master/packages/babel-preset-flow
-            '@babel/preset-flow',
+            // TypeScript
+            // https://babeljs.io/docs/en/babel-preset-typescript
+            '@babel/typescript',
             // JSX
             // https://github.com/babel/babel/tree/master/packages/babel-preset-react
             ['@babel/preset-react', { development: isDebug }],

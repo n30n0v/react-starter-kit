@@ -20,7 +20,7 @@ module.exports = {
       },
     ],
     ['@babel/preset-stage-2', { decoratorsLegacy: true }],
-    '@babel/preset-flow',
+    '@babel/typescript',
     '@babel/preset-react',
   ],
   ignore: ['node_modules', 'build'],

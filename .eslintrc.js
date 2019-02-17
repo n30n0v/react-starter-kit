@@ -10,28 +10,44 @@
 // ESLint configuration
 // http://eslint.org/docs/user-guide/configuring
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
+
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
 
   extends: [
     'airbnb',
-    'plugin:flowtype/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:css-modules/recommended',
     'prettier',
-    'prettier/flowtype',
     'prettier/react',
+    'prettier/@typescript-eslint',
   ],
 
-  plugins: ['flowtype', 'css-modules', 'prettier'],
+  plugins: ['@typescript-eslint', 'css-modules', 'prettier'],
 
   globals: {
     __DEV__: true,
   },
 
   env: {
+    node: true,
     browser: true,
   },
 
   rules: {
+    // Too restrictive: https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/destructuring-assignment.md
+    'react/destructuring-assignment': 'off',
+
+    // Needs for require css modules or node utils stuff
+    '@typescript-eslint/no-var-requires': 0,
+
+    // Prefers 2 spaces than 4
+    '@typescript-eslint/indent': 0,
+
     // Forbid the use of extraneous packages
     // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-extraneous-dependencies.md
     'import/no-extraneous-dependencies': ['error', { packageDir: '.' }],
@@ -43,6 +59,15 @@ module.exports = {
       'error',
       {
         allow: ['warn', 'error', 'info'],
+      },
+    ],
+
+    // Allow only special identifiers
+    // https://eslint.org/docs/rules/no-underscore-dangle
+    'no-underscore-dangle': [
+      'error',
+      {
+        allow: ['__typename'],
       },
     ],
 
@@ -78,7 +103,10 @@ module.exports = {
 
     // Allow .js files to use JSX syntax
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
-    'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
+    'react/jsx-filename-extension': [
+      'error',
+      { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+    ],
 
     // Functional and class components are equivalent from React’s point of view
     // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
@@ -95,6 +123,7 @@ module.exports = {
     'import/resolver': {
       node: {
         moduleDirectory: ['node_modules', 'src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
   },

@@ -9,13 +9,16 @@
 
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Header.css';
 import Link from '../Link';
 import Navigation from '../Navigation';
-import logoUrl from './logo-small.png';
-import logoUrl2x from './logo-small@2x.png';
 
-class Header extends React.Component {
+const s = require('./Header.css');
+const logoUrl = require('./logo-small.png');
+const logoUrl2x = require('./logo-small@2x.png');
+
+interface Props {}
+
+class Header extends React.Component<Props> {
   render() {
     return (
       <div className={s.root}>
