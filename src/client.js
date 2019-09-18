@@ -13,12 +13,8 @@ import ReactDOM from 'react-dom';
 import deepForceUpdate from 'react-deep-force-update';
 import queryString from 'query-string';
 import { createPath } from 'history/PathUtils';
-import JssProvider from 'react-jss/lib/JssProvider';
-import {
-  createMuiTheme,
-  MuiThemeProvider,
-  createGenerateClassName,
-} from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
 import App from './components/App';
@@ -93,14 +89,10 @@ async function onLocationChange(location, action) {
       },
     });
 
-    const generateClassName = createGenerateClassName();
-
     const root = (
-      <JssProvider generateClassName={generateClassName}>
-        <MuiThemeProvider theme={theme}>
-          <App context={context}>{route.component}</App>
-        </MuiThemeProvider>
-      </JssProvider>
+      <ThemeProvider theme={theme}>
+        <App context={context}>{route.component}</App>
+      </ThemeProvider>
     );
 
     const renderReactApp = isInitialRender ? ReactDOM.hydrate : ReactDOM.render;

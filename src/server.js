@@ -19,13 +19,8 @@ import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
-import { SheetsRegistry } from 'jss';
-import JssProvider from 'react-jss/lib/JssProvider';
-import {
-  createMuiTheme,
-  createGenerateClassName,
-  MuiThemeProvider,
-} from '@material-ui/core/styles';
+import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
 import App from './components/App';
@@ -168,12 +163,6 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
 
-    // Create a sheetsRegistry instance.
-    const sheetsRegistry = new SheetsRegistry();
-
-    // Create a sheetsManager instance.
-    const sheetsManager = new Map();
-
     // Create a theme instance.
     const theme = createMuiTheme({
       palette: {
@@ -183,18 +172,12 @@ app.get('*', async (req, res, next) => {
       },
     });
 
-    // Create a new class name generator.
-    const generateClassName = createGenerateClassName();
+    const sheets = new ServerStyleSheets();
 
-    const root = (
-      <JssProvider
-        registry={sheetsRegistry}
-        generateClassName={generateClassName}
-      >
-        <MuiThemeProvider theme={theme} sheetsManager={sheetsManager}>
-          <App context={context}>{route.component}</App>
-        </MuiThemeProvider>
-      </JssProvider>
+    const root = sheets.collect(
+      <ThemeProvider theme={theme}>
+        <App context={context}>{route.component}</App>
+      </ThemeProvider>,
     );
 
     data.children = ReactDOM.renderToString(root);
@@ -218,7 +201,7 @@ app.get('*', async (req, res, next) => {
     };
 
     // Grab the CSS from our sheetsRegistry.
-    data.jss = sheetsRegistry.toString();
+    data.jss = sheets.toString();
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
